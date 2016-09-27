@@ -27,13 +27,16 @@ public class KamalThread extends Thread {
     public void run() {
         while (sharedData.isWorking) {
             try {
+                //receive the signal from pizza
                 sharedData.pizza_deliver.acquire();
 		bringPizza();
+                //updates the num_slices
 		sharedData.mutex.acquire();
 		sharedData.num_slices.set(S);
 		sharedData.mutex.release();
 		
                 for (int i = 0; i < S; i++) {
+                    //signals sleeping kids
                     sharedData.pizza.release();
                 }
             } catch (InterruptedException ex) {

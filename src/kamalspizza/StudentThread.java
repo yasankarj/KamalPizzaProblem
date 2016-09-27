@@ -25,13 +25,19 @@ public class StudentThread extends Thread {
     public void run() {
         while (sharedData.isStudying) {
             try {
+                //Student waits to pizza 
                 this.sharedData.pizza.acquire();
+                //Student waits to mutex to get a piece 
                 this.sharedData.mutex.acquire();
+                //gets a piece
                 this.sharedData.num_slices.decrementAndGet();
                 if (this.sharedData.num_slices.get() == 0) {
+                    //if slices are finished, call kamal
                     System.out.println("Pizza finished. Student "+this.getId()+" calls Kamal");
+                    //signals kamals thread
                     this.sharedData.pizza_deliver.release();
                 }
+                //finished fetching pizza slice
                 this.sharedData.mutex.release();
                 eatAndStudy();
             } catch (InterruptedException ex) {
